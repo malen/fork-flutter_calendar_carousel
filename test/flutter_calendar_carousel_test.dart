@@ -12,8 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 Type typeOf<T>() => T;
 
 void main() {
-  testWidgets('Default test for Calendar Carousel',
-      (WidgetTester tester) async {
+  testWidgets('Default test for Calendar Carousel', (WidgetTester tester) async {
     DateTime? pressedDay;
     //  Build our app and trigger a frame.
     final carousel = CalendarCarousel(
@@ -41,6 +40,7 @@ void main() {
       todayButtonColor: Colors.transparent,
       todayBorderColor: Colors.green,
       markedDateMoreShowTotal: true,
+      currentDateTime: DateTime.now(),
       // null for not showing hidden events indicator
       onDayPressed: (date, event) {
         pressedDay = date;
@@ -84,8 +84,7 @@ void main() {
 
       expect(pressedDay, isNull);
 
-      await tester.tap(
-          find.text(DateTime.now().subtract(Duration(days: 1)).day.toString()));
+      await tester.tap(find.text(DateTime.now().subtract(Duration(days: 1)).day.toString()));
 
       await tester.pump();
 
@@ -112,8 +111,7 @@ void main() {
 
       expect(find.byWidget(carousel), findsOneWidget);
 
-      await tester.tap(
-          find.text(DateTime.now().subtract(Duration(days: 1)).day.toString()));
+      await tester.tap(find.text(DateTime.now().subtract(Duration(days: 1)).day.toString()));
       await tester.pump();
     },
   );
@@ -144,8 +142,7 @@ void main() {
 
       expect(longPressedDay, isNull);
 
-      await tester.longPress(
-          find.text(DateTime.now().subtract(Duration(days: 1)).day.toString()));
+      await tester.longPress(find.text(DateTime.now().subtract(Duration(days: 1)).day.toString()));
       await tester.pump();
 
       expect(longPressedDay, isNotNull);
@@ -171,8 +168,7 @@ void main() {
 
       expect(find.byWidget(carousel), findsOneWidget);
 
-      await tester.longPress(
-          find.text(DateTime.now().subtract(Duration(days: 1)).day.toString()));
+      await tester.longPress(find.text(DateTime.now().subtract(Duration(days: 1)).day.toString()));
       await tester.pump();
     },
   );
