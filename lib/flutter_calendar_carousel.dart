@@ -250,6 +250,7 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
   int _pageNum = 0;
   late DateTime minDate;
   late DateTime maxDate;
+  late DateTime currDate;
 
   /// When FIRSTDAYOFWEEK is 0 in dart-intl, it represents Monday. However it is the second day in the arrays of Weekdays.
   /// Therefore we need to add 1 modulo 7 to pick the right weekday from intl. (cf. [GlobalMaterialLocalizations])
@@ -261,9 +262,9 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
   void initState() {
     super.initState();
     initializeDateFormatting();
-
+    currDate = widget.currentDateTime ?? DateTime.now();
     minDate = widget.minSelectedDate ?? DateTime(2018);
-    maxDate = widget.maxSelectedDate ?? DateTime(DateTime.now().year + 1, DateTime.now().month, DateTime.now().day);
+    maxDate = widget.maxSelectedDate ?? DateTime(currDate.year + 1, currDate.month, currDate.day);
 
     final selectedDateTime = widget.selectedDateTime;
     if (selectedDateTime != null) _selectedDate = selectedDateTime;
@@ -324,6 +325,7 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
   @override
   Widget build(BuildContext context) {
     final headerText = widget.headerText;
+    currDate = widget.currentDateTime ?? DateTime.now();
     return SizedBox(
       width: widget.width,
       height: widget.height,
@@ -564,7 +566,7 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
                     /// last day of month + weekday
                     (index) {
                   final selectedDateTime = widget.selectedDateTime;
-                  bool isToday = DateTime.now().day == index + 1 - _startWeekday && DateTime.now().month == month && DateTime.now().year == year;
+                  bool isToday = currDate.day == index + 1 - _startWeekday && currDate.month == month && currDate.year == year;
                   bool isSelectedDay =
                       selectedDateTime != null && selectedDateTime.year == year && selectedDateTime.month == month && selectedDateTime.day == index + 1 - _startWeekday;
                   bool isPrevMonthDay = index < _startWeekday;
@@ -623,7 +625,6 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
     List<DateTime> weekDays = _weeks[slideIndex];
 
     weekDays = weekDays.map((weekDay) => weekDay.add(Duration(days: firstDayOfWeek))).toList();
-
     return AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -652,7 +653,7 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
                   padding: EdgeInsets.zero,
                   children: List.generate(weekDays.length, (index) {
                     /// last day of month + weekday
-                    bool isToday = weekDays[index].day == DateTime.now().day && weekDays[index].month == DateTime.now().month && weekDays[index].year == DateTime.now().year;
+                    bool isToday = weekDays[index].day == currDate.day && weekDays[index].month == currDate.month && weekDays[index].year == currDate.year;
                     bool isSelectedDay =
                         this._selectedDate.year == weekDays[index].year && this._selectedDate.month == weekDays[index].month && this._selectedDate.day == weekDays[index].day;
                     bool isPrevMonthDay = weekDays[index].month < this._targetDate.month;
@@ -698,7 +699,7 @@ class _CalendarState<T extends EventInterface> extends State<CalendarCarousel<T>
   }
 
   List<DateTime> _getDaysInWeek([DateTime? selectedDate]) {
-    selectedDate ??= DateTime.now();
+    selectedDate ??= currDate;
 
     var firstDayOfCurrentWeek = _firstDayOfWeek(selectedDate);
     var lastDayOfCurrentWeek = _lastDayOfWeek(selectedDate);
